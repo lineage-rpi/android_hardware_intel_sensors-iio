@@ -1088,12 +1088,16 @@ int sensor_activate (int s, int enabled, int from_virtual)
 		device_fd[dev_num] = dev_fd;
 
 		if (dev_fd == -1) {
-			ALOGE("Could not open fd on %s (%s)\n", device_name, strerror(errno));
-			adjust_counters(s, 0, from_virtual);
-			return -1;
+			/* It is ok if it is MODE_POLL and the device is not found */
+			if(sensor[s].mode != MODE_POLL || errno != ENOENT){
+				ALOGE("Could not open fd on %s (%s)\n", device_name, strerror(errno));
+				adjust_counters(s, 0, from_virtual);
+				return -1;
+			}
+			ALOGI("Proceeding without %s in MODE_POLL\n", device_name);
+		}else{
+			ALOGV("Opened %s: fd=%d\n", device_name, dev_fd);
 		}
-
-		ALOGV("Opened %s: fd=%d\n", device_name, dev_fd);
 
 		if (sensor[s].mode == MODE_TRIGGER) {
 
