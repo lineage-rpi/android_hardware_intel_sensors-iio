@@ -1,0 +1,72 @@
+//
+// Copyright (C) 2015 Intel Corporation
+// Copyright (C) 2025 KonstaKANG
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_defaults {
+    name: "sensors-iio_defaults",
+    vendor: true,
+    header_libs: [
+        "libhardware_headers",
+        "libutils_headers",
+    ],
+    shared_libs: [
+        "libcutils",
+        "libdl",
+        "liblog",
+    ],
+    cflags: [
+        "-fvisibility=hidden",
+    ],
+}
+
+cc_library_shared {
+    name: "sensors.iio",
+    relative_install_path: "hw",
+    srcs: [
+        "accel-calibration.c",
+        "compass-calibration.c",
+        "control.c",
+        "description.c",
+        "discovery.c",
+        "entry.c",
+        "enumeration.c",
+        "filtering.c",
+        "gyro-calibration.c",
+        "matrix-ops.c",
+        "transform.c",
+        "utils.c",
+    ],
+    cflags: ["-DLOG_TAG=\"Sensors\""],
+    ldflags: ["-Wl,--gc-sections"],
+    defaults: ["sensors-iio_defaults"],
+}
+
+cc_binary {
+    name: "sens",
+    srcs: ["sens.c"],
+    cflags: ["-DLOG_TAG=\"Sensors\""],
+    defaults: ["sensors-iio_defaults"],
+}
+
+cc_library_shared {
+    name: "activity_recognition.iio",
+    relative_install_path: "hw",
+    srcs: [
+        "activity_event_entry.c",
+        "discovery.c",
+        "utils.c",
+    ],
+    cflags: ["-DLOG_TAG=\"Activity\""],
+    ldflags: ["-Wl,--gc-sections"],
+    defaults: ["sensors-iio_defaults"],
+}
+
+cc_binary {
+    name: "activity",
+    srcs: ["activity.c"],
+    cflags: ["-DLOG_TAG=\"Activity\""],
+    defaults: ["sensors-iio_defaults"],
+}
