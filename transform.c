@@ -453,6 +453,15 @@ static int finalize_sample_default (int s, sensors_event_t* data)
 			sensor[s].prev_val.data = data->data[0];
 			break;
 		case SENSOR_TYPE_PRESSURE:
+			/* Only keep two decimals for these readings */
+			data->data[0] = 0.01 * ((int) (data->data[0] * 100 * 10));
+
+			/* These are on change sensors ; drop the sample if it has the same value as the previously reported one. */
+			if (data->data[0] == sensor[s].prev_val.data)
+				return 0;
+
+			sensor[s].prev_val.data = data->data[0];
+			break;
 		case SENSOR_TYPE_LIGHT:
 		case SENSOR_TYPE_INTERNAL_ILLUMINANCE:
 		case SENSOR_TYPE_INTERNAL_INTENSITY:
